@@ -1,7 +1,8 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+
 const Joi = require("joi");
 const idSchema = Joi.string().regex(/^[0-9]+$/).required();
+
 /**
  * Base class for request DTO
  */
@@ -13,7 +14,7 @@ class CommandDTOBase {
         if (!this['_translator']) {
             throw new Error('`this._translator` must be defined by derived class!');
         }
-        return this['_translator'].whole(source);
+        return this['_translator'](source);
     }
     /**
      * Gets object schema used for validation
@@ -29,6 +30,8 @@ class CommandDTOBase {
     }
 }
 exports.CommandDTOBase = CommandDTOBase;
+
+
 /**
  * Base class for response DTO
  */
@@ -40,8 +43,7 @@ class ResultDTOBase {
         if (!this['_translator']) {
             throw new Error('`this._translator` must be defined by derived class!');
         }
-        return this['_translator'].whole(source);
+        return this['_translator'](source);
     }
 }
 exports.ResultDTOBase = ResultDTOBase;
-//# sourceMappingURL=model.js.map

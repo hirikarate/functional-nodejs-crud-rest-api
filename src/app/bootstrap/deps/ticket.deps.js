@@ -5,7 +5,7 @@ const dependency_helper_1 = require("../utils/dependency/dependency-helper");
 const ticket_entity_1 = require("../../models/entities/role.entity");
 const ticketLogic = require("./ticket.logic");
 const ticketRepo = require("../../data-access/ticket.repository");
-const ticketModel = require("../../models/ticket.model");
+const ticketModel = require("../../models/dto/role.model");
 const ticket_router_1 = require("../../web/ticket.router");
 exports.registerTicketDeps = () => {
     dependency_helper_1.registerValue(ticket_entity_1.TicketEntity, 'TicketEntity');

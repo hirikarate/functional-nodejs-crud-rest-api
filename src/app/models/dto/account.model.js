@@ -1,87 +1,129 @@
 'use strict'
 
 const Joi = require('joi')
-const common_1 = require('@micro-fleet/common')
+
 const { CommandDTOBase, ResultDTOBase } = require('./model')
+const { createTranslator } = require('../../utils/model-translator')
 
 const schemaCreate = Joi.object().keys({
     username: Joi.string().regex(/[a-zA-Z0-9_\.]/).min(1).max(100).required(),
     password: Joi.string().min(6).max(100).required(),
-    role: Joi.string().max(20).required(),
     fullname: Joi.string().min(1).max(100).required(),
+})
+
+const schemaPatch = schemaCreate.keys({
+    id: Joi.string().regex(/^[0-9]+$/).required(),
+    username: Joi.string().regex(/[a-zA-Z0-9_\.]/).min(1).max(100).optional(),
+    password: Joi.string().min(6).max(100).optional(),
+    fullname: Joi.string().min(1).max(100).optional(),
 })
 
 const schemaReplace = schemaCreate.keys({
     id: Joi.string().regex(/^[0-9]+$/).required(),
     password: Joi.string().min(6).max(100).optional(),
 })
+
+
 /**
  * Request DTO for account creating endpoint
  */
 class AccountCreateCommand extends CommandDTOBase {
-    constructor() {
-        super(...arguments)
-        this.username = undefined
-        this.password = undefined
-        this.role = undefined
-        this.fullname = undefined
-    }
     /**
      * @override
      */
     static get objectSchema() {
         return schemaCreate
     }
+
+    constructor() {
+        super()
+        this.username = undefined
+        this.password = undefined
+        this.role = undefined
+        this.fullname = undefined
+    }
 }
+AccountCreateCommand['_translator'] = createTranslator(AccountCreateCommand)
 exports.AccountCreateCommand = AccountCreateCommand
-AccountCreateCommand['_translator'] = new common_1.ModelAutoMapper(AccountCreateCommand)
+
+
 /**
  * Request DTO for account creating endpoint
  */
 class AccountCreateResult extends ResultDTOBase {
     constructor() {
-        super(...arguments)
+        super()
         this.id = undefined
     }
 }
+AccountCreateResult['_translator'] = createTranslator(AccountCreateResult)
 exports.AccountCreateResult = AccountCreateResult
-AccountCreateResult['_translator'] = new common_1.ModelAutoMapper(AccountCreateResult)
+
+
 /**
  * Request DTO for account updating endpoint
  */
 class AccountUpdateCommand extends AccountCreateCommand {
-    constructor() {
-        super(...arguments)
-        this.id = undefined
-    }
     /**
      * @override
      */
     static get objectSchema() {
         return schemaReplace
     }
+
+    constructor() {
+        super()
+        this.id = undefined
+    }
 }
+AccountUpdateCommand['_translator'] = createTranslator(AccountUpdateCommand)
 exports.AccountUpdateCommand = AccountUpdateCommand
-AccountUpdateCommand['_translator'] = new common_1.ModelAutoMapper(AccountUpdateCommand)
+
+
 /**
  * Response DTO for account updating endpoint
  */
 class AccountUpdateResult extends AccountCreateResult {
 }
+AccountUpdateCommand['_translator'] = createTranslator(AccountUpdateCommand)
 exports.AccountUpdateResult = AccountUpdateResult
-AccountUpdateCommand['_translator'] = new common_1.ModelAutoMapper(AccountUpdateCommand)
+
+/**
+ * Request DTO for account patching endpoint
+ */
+class AccountPatchCommand extends AccountUpdateCommand {
+    /**
+     * @override
+     */
+    static get objectSchema() {
+        return schemaPatch
+    }
+}
+AccountPatchCommand['_translator'] = createTranslator(AccountPatchCommand)
+exports.AccountPatchCommand = AccountPatchCommand
+
+
+/**
+ * Response DTO for account patching endpoint
+ */
+class AccountPatchResult extends AccountUpdateResult {
+}
+AccountPatchResult['_translator'] = createTranslator(AccountPatchResult)
+exports.AccountPatchResult = AccountPatchResult
+
+
 /**
  * Response DTO for account detail endpoint
  */
 class AccountDetailResult extends AccountCreateResult {
     constructor() {
-        super(...arguments)
+        super()
         this.id = undefined
         this.username = undefined
         this.role = undefined
         this.fullname = undefined
     }
 }
+
+AccountDetailResult['_translator'] = createTranslator(AccountDetailResult)
 exports.AccountDetailResult = AccountDetailResult
-AccountDetailResult['_translator'] = new common_1.ModelAutoMapper(AccountDetailResult)
-//# sourceMappingURL=account.model.js.map

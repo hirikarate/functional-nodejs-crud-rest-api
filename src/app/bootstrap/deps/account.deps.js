@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dependency_helper_1 = require("../utils/dependency/dependency-helper");
 const account_entity_1 = require("../../models/entities/account.entity");
 const accRepo = require("../../data-access/account.repository");
-const accModel = require("../../models/account.model");
+const accModel = require("../../models/dto/account.model");
 const accLogic = require("../../domain/account.logic");
 const account_router_1 = require("../../web/account.router");
 exports.registerAccountDeps = () => {
