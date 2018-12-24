@@ -5,8 +5,10 @@ const { Model } = require('objection')
 const { EntityBase } = require("./EntityBase");
 
 const DB_TABLE = 'public.fn_accounts';
+const JOINT_TABLE = 'public.fn_account_role';
 
-exports.AccountEntity = class extends EntityBase {
+
+class AccountEntity extends EntityBase {
 
     /**
      * @override
@@ -24,11 +26,15 @@ exports.AccountEntity = class extends EntityBase {
         const { RoleEntity } = require('./role.entity')
         return {
             privilege: {
-                relation: Model.HasOneRelation,
-                modelClass: SettingEntity,
+                relation: Model.ManyToManyRelation,
+                modelClass: RoleEntity,
                 join: {
-                    from: `${this.tableName}.role_id`,
-                    to: `${SettingEntity.tableName}.id`,
+                    from: `${this.tableName}.id`,
+                    through: {
+                        from: `${JOINT_TABLE}.account_id`,
+                        to: `${JOINT_TABLE}.role_id`,
+                    },
+                    to: `${RoleEntity.tableName}.id`,
                 },
             },
         }
@@ -37,10 +43,12 @@ exports.AccountEntity = class extends EntityBase {
     constructor() {
         super();
 
+        // Pre-create properties to facilitate V8 hidden class optimization.
         this.id = undefined;
         this.username = undefined;
         this.password = undefined;
-        this.role = undefined;
         this.fullname = undefined;
     }
 }
+
+module.exports = { AccountEntity }

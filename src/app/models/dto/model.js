@@ -1,7 +1,13 @@
 "use strict";
 
 const Joi = require("joi");
-const idSchema = Joi.string().regex(/^[0-9]+$/).required();
+
+exports.idRule = Joi.string().regex(/^[0-9]+$/).required()
+
+const idSchema = Joi.object({
+    id: exports.idRule,
+})
+exports.idSchema = idSchema
 
 /**
  * Base class for request DTO
@@ -21,12 +27,6 @@ class CommandDTOBase {
      */
     static get objectSchema() {
         throw new Error('This method must be implemented by derived class!');
-    }
-    /**
-     * Gets id schema used for validation
-     */
-    static get idSchema() {
-        return idSchema;
     }
 }
 exports.CommandDTOBase = CommandDTOBase;

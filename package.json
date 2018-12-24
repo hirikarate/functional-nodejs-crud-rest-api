@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "An ExpressJS-based CRUD RESTful API service written in functional programming style",
     "scripts": {
-        "start": "nodemon src/app/app.js"
+        "start": "nodemon src/app/index.js"
     },
     "dependencies": {
         "automapper-ts": "~1.9",

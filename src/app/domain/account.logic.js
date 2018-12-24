@@ -1,19 +1,45 @@
 'use strict'
 
+const R = require('rambdax')
+const { of: futureOf } = require('fluture')
+const FT = require('folktale')
+
 const lg = require('./logic')
+const wo = require('../utils/web-operators')
 
-exports.logicFindAccounts = ((repoQueryAccounts, ResponseClass, condition, projection) => {
-    const transformAccounts = accounts => accounts.map(ResponseClass.from)
-    const transformMaybe = maybeAccounts => maybeAccounts.map(transformAccounts)
-    return repoQueryAccounts(condition, projection).map(transformMaybe)
-})
 
-exports.logicCreateAccount = lg.logicCreate
+const createAccountLogic = (repo) => {
+    const fn = {}
 
-exports.logicUpdateAccount = lg.logicUpdate
+    fn.logicFindAccounts = lg.logicFind(repo.repoQueryAccounts)
+    
+    fn.logicFindAccountById = lg.logicFindById(repo.repoQueryAccountById)
 
-exports.logicDeleteAccount = lg.logicDelete
+    fn.logicCreateAccount = lg.logicCreate(repo.repoInsertAccount)
 
-exports.logicValidateAccount = lg.logicValidateObject
+    fn.logicUpdateAccount = lg.logicUpdate(repo.repoUpdateAccount)
 
-exports.logicValidateAccountId = lg.logicValidateId
+
+    fn.logicDeleteAccount = (ResponseClass, { id }) => {
+        const delAcc = () => repo.repoDeleteAccount(id)
+            .map(rowCount => FT.result.Ok(rowCount
+                ? ResponseClass.from({ id })
+                : null)
+            )
+        const createErr = R.compose(futureOf, wo.createClientBlameResult, R.always('Cannot delete last account'))
+
+        return repo.repoQueryAccounts(null, null)
+            .chain(maybe => maybe.matchWith({
+                Nothing: R.compose(futureOf, FT.result.Ok, R.always(null)),
+                Just: R.ifElse(({ value }) => value.length > 1, delAcc, createErr),
+            }))
+    }
+
+
+    fn.logicValidateAccount = lg.logicValidateObject
+
+    return fn
+
+}
+
+module.exports = { createAccountLogic }

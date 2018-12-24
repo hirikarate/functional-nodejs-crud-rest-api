@@ -1,36 +1,50 @@
-"use strict";
+'use strict'
 
-const FT = require("folktale");
+const FT = require('folktale')
+const R = require('rambdax')
 
 /**
- * (function, class, object|array<string>, array<string>) => Future<Maybe<object>>
+ * (function, class, object|array<string>, array<string>) => Future<Maybe<array<object>>>
  */
-exports.repoQuery = ((dbSelect, EntityClass, conditions, projections) => {
+exports.repoQuery = R.curry((dbSelect, EntityClass, conditions, projections) => {
     return dbSelect(EntityClass, conditions, projections)
-        .map(rows => (rows && rows.length
-        ? FT.maybe.Just(rows)
-        : FT.maybe.Nothing()));
-});
+        .map(R.ifElse(
+            R.compose(Boolean, R.length),
+            FT.maybe.Just,
+            FT.maybe.Nothing
+        ))
+})
+
+/**
+ * (function, class, string) => Future<Maybe<object>>
+ */
+exports.repoQueryById = R.curry((dbSelectById, EntityClass, id) => {
+    return dbSelectById(EntityClass, id)
+        .map(R.ifElse(Boolean, FT.maybe.Just, FT.maybe.Nothing))
+})
 
 /**
  * (function, class, object) => Future<object>
  */
-exports.repoInsert = ((dbInsert, EntityClass, target) => {
-    return dbInsert(EntityClass, target);
-});
+exports.repoInsert = R.curry((dbInsert, EntityClass, target) => {
+    return dbInsert(EntityClass, target)
+})
 
 /**
- * (function, class, object) => Future<object>
+ * (function, class, string, object) => Future<object>
  */
-exports.repoUpdate = ((dbUpdate, EntityClass, id, target) => {
-    return dbUpdate(EntityClass, id, target);
-});
+exports.repoUpdate = R.curry((dbUpdate, EntityClass, id, target) => {
+    return dbUpdate(EntityClass, id, target)
+})
 
-exports.repoUpdateByProps = ((dbUpdateByProps, EntityClass, conditions, target) => {
-    return dbUpdateByProps(EntityClass, conditions, target);
-});
 
-exports.repoDelete = ((dbDelete, EntityClass, id) => {
-    return dbDelete(EntityClass, id);
-});
-//# sourceMappingURL=repository.js.map
+/**
+ * (function, class, string, object) => Future<object>
+ */
+exports.repoPatch = R.curry((dbPatch, EntityClass, id, target) => {
+    return dbPatch(EntityClass, id, target)
+})
+
+exports.repoDelete = R.curry((dbDelete, EntityClass, id) => {
+    return dbDelete(EntityClass, id)
+})

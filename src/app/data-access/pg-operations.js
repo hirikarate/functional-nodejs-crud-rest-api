@@ -35,12 +35,16 @@ exports.dbSelect = Future.encaseP3((ModelClass, conditions, projection) => {
     return query;
 });
 
-exports.dbFindById = Future.encaseP2((ModelClass, id) => ModelClass.query().findById(id))
+exports.dbSelectById = Future.encaseP2((ModelClass, id) => {
+    const q = ModelClass.query().findById(id)
+    console.log(q.toSql())
+    return q
+})
 
 exports.dbInsert = Future.encaseP2((ModelClass, obj) => ModelClass.query().insertAndFetch(obj))
 
-exports.dbPatch = Future.encaseP3((ModelClass, id, obj) => ModelClass.query().patch(obj).where(ModelClass.idColumn[0], id))
+exports.dbPatch = Future.encaseP3((ModelClass, id, obj) => ModelClass.query().patchAndFetchById(id, obj))
 
-exports.dbUpdate = Future.encaseP3((ModelClass, id, obj) => ModelClass.query().update(obj).where(ModelClass.idColumn[0], id))
+exports.dbUpdate = Future.encaseP3((ModelClass, id, obj) => ModelClass.query().updateAndFetchById(id, obj))
 
 exports.dbDelete = Future.encaseP2((ModelClass, id) => ModelClass.query().deleteById(id));

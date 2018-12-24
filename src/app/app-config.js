@@ -4,7 +4,7 @@ const f = require("fluture");
 
 exports.getAppConfig = () => f.of({
     database: {
-        connectionString: 'postgres://postgres:postgres@localhost:5432/gigaticket_local',
+        connectionString: 'postgres://postgres:postgres@localhost:5432/func-node',
     },
     auth: {
         server: 'http://localhost',

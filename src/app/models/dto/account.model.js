@@ -2,7 +2,7 @@
 
 const Joi = require('joi')
 
-const { CommandDTOBase, ResultDTOBase } = require('./model')
+const { CommandDTOBase, ResultDTOBase, idSchema, idRule } = require('./model')
 const { createTranslator } = require('../../utils/model-translator')
 
 const schemaCreate = Joi.object().keys({
@@ -12,14 +12,14 @@ const schemaCreate = Joi.object().keys({
 })
 
 const schemaPatch = schemaCreate.keys({
-    id: Joi.string().regex(/^[0-9]+$/).required(),
+    id: idRule,
     username: Joi.string().regex(/[a-zA-Z0-9_\.]/).min(1).max(100).optional(),
     password: Joi.string().min(6).max(100).optional(),
     fullname: Joi.string().min(1).max(100).optional(),
 })
 
 const schemaReplace = schemaCreate.keys({
-    id: Joi.string().regex(/^[0-9]+$/).required(),
+    id: idRule,
     password: Joi.string().min(6).max(100).optional(),
 })
 
@@ -112,6 +112,23 @@ AccountPatchResult['_translator'] = createTranslator(AccountPatchResult)
 exports.AccountPatchResult = AccountPatchResult
 
 
+class AccountDetailQuery extends CommandDTOBase {
+    /**
+     * @override
+     */
+    static get objectSchema() {
+        return idSchema
+    }
+
+    constructor() {
+        super()
+        this.id = undefined
+    }
+}
+AccountDetailQuery['_translator'] = createTranslator(AccountDetailQuery)
+exports.AccountDetailQuery = AccountDetailQuery
+
+
 /**
  * Response DTO for account detail endpoint
  */
@@ -124,6 +141,38 @@ class AccountDetailResult extends AccountCreateResult {
         this.fullname = undefined
     }
 }
-
 AccountDetailResult['_translator'] = createTranslator(AccountDetailResult)
 exports.AccountDetailResult = AccountDetailResult
+
+
+class AccountDeleteCommand extends CommandDTOBase {
+    /**
+     * @override
+     */
+    static get objectSchema() {
+        return idSchema
+    }
+
+    constructor() {
+        super()
+        this.id = undefined
+    }
+}
+AccountDeleteCommand['_translator'] = createTranslator(AccountDeleteCommand)
+exports.AccountDeleteCommand = AccountDeleteCommand
+
+
+/**
+ * Response DTO for account delete endpoint
+ */
+class AccountDeleteResult extends AccountCreateResult {
+    constructor() {
+        super()
+        this.id = undefined
+        this.username = undefined
+        this.role = undefined
+        this.fullname = undefined
+    }
+}
+AccountDeleteResult['_translator'] = createTranslator(AccountDeleteResult)
+exports.AccountDeleteResult = AccountDeleteResult

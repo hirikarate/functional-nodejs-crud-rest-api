@@ -1,13 +1,25 @@
-"use strict";
+'use strict'
 
-const re = require("./repository");
+const re = require('./repository')
+const { AccountEntity } = require('../models/entities/account.entity')
 
-exports.repoInsertAccount = re.repoInsert;
+const createAccountRepository = (dbOps) => {
+    const fn = {}
 
-exports.repoQueryAccounts = re.repoQuery;
+    fn.repoInsertAccount = re.repoInsert(dbOps.dbInsert, AccountEntity)
 
-exports.repoPatchAccount = re.dbPatch;
+    fn.repoQueryAccounts = re.repoQuery(dbOps.dbSelect, AccountEntity)
+    
+    fn.repoQueryAccountById = re.repoQueryById(dbOps.dbSelectById, AccountEntity)
 
-exports.repoUpdateAccount = re.repoUpdate;
+    fn.repoPatchAccount = re.repoPatch(dbOps.dbPatch, AccountEntity)
 
-exports.repoDeleteAccount = re.repoDelete;
+    fn.repoUpdateAccount = re.repoUpdate(dbOps.dbUpdate, AccountEntity)
+
+    fn.repoDeleteAccount = re.repoDelete(dbOps.dbDelete, AccountEntity)
+
+	return fn
+
+}
+
+module.exports = { createAccountRepository }

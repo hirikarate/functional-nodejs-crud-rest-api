@@ -1,6 +1,6 @@
-"use strict";
+'use strict'
 
-const { Model } = require("objection");
+const { Model } = require('objection')
 
 
 /**
@@ -15,8 +15,8 @@ class EntityBase extends Model {
      * @abstract
      */
     static get tableName() {
-        throw new Error('This method must be implemented by derived class!');
+        throw new Error('This method must be implemented by derived class!')
     }
 }
 
-exports.EntityBase = EntityBase;
+module.exports = { EntityBase }
